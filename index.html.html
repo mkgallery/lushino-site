@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LUSHINO INV · Graphics &amp; Art</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&amp;display=swap" rel="stylesheet">
+<style id="mystyle">
+:root{--bg:#0b0b14;--card:#14142a;--text:#eef0ff;--muted:#a3a6c8;--line:#262650;--a1:#8b5cf6;--a2:#ec4899;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f6f5ff;--card:#fff;--text:#16163a;--muted:#5b5e86;--line:#e1e0f5;color-scheme:light}}
+:root[data-theme="light"]{--bg:#f6f5ff;--card:#fff;--text:#16163a;--muted:#5b5e86;--line:#e1e0f5;color-scheme:light}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{background:var(--bg);color:var(--text);font-family:Poppins,system-ui,sans-serif;overflow-x:hidden}
+.grad{background:linear-gradient(120deg,var(--a1),var(--a2))}
+.gtext{background:linear-gradient(120deg,var(--a1),var(--a2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.card{background:var(--card);border:1px solid var(--line);border-radius:1.25rem;transition:.3s}
+.card:hover{transform:translateY(-6px);box-shadow:0 18px 40px -18px var(--a1)}
+.muted{color:var(--muted)}
+.hero{background:radial-gradient(circle at 20% 20%,var(--a1) 0,transparent 40%),radial-gradient(circle at 80% 60%,var(--a2) 0,transparent 40%),var(--bg);background-size:cover;background-position:center}
+.blob{animation:fl 7s ease-in-out infinite}@keyframes fl{50%{transform:translateY(-18px) rotate(6deg)}}
+.reveal{opacity:0;transform:translateY(24px);transition:.7s}.reveal.on{opacity:1;transform:none}
+.inp{width:100%;padding:.7rem 1rem;border-radius:.75rem;background:var(--bg);border:1px solid var(--line);color:var(--text)}
+.chip{padding:.4rem 1rem;border-radius:99px;border:1px solid var(--line);cursor:pointer;font-size:.85rem}
+.chip.act{background:linear-gradient(120deg,var(--a1),var(--a2));color:#fff;border-color:transparent}
+.tile{position:relative;overflow:hidden;border-radius:1.25rem;aspect-ratio:1/1;cursor:pointer}
+.tile img,.tile svg,.cover img,.cover svg{width:100%;height:100%;object-fit:cover;transition:.5s}
+.tile:hover img,.tile:hover svg{transform:scale(1.1)}
+.cap{position:absolute;inset:auto 0 0 0;padding:1rem;background:linear-gradient(transparent,rgba(0,0,0,.8));color:#fff}
+.hid{display:none!important}
+.slide{position:absolute;inset:0;opacity:0;transition:opacity .8s}.slide.on{opacity:1}
+.bar{height:8px;border-radius:9px;background:var(--line);overflow:hidden}.bar i{display:block;height:100%;width:0;transition:width 1.4s}
+.cursor::after{content:"|";animation:bl 1s infinite}@keyframes bl{50%{opacity:0}}
+.faq p{max-height:0;overflow:hidden;transition:.4s}.faq.open p{max-height:400px;margin-top:.5rem}
+.reel{position:relative;aspect-ratio:9/16;border-radius:1.25rem;overflow:hidden;cursor:pointer;background:#000}
+.reel video,.reel img{width:100%;height:100%;object-fit:cover}
+.reel .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:#fff;text-shadow:0 2px 12px #000;background:linear-gradient(transparent,rgba(0,0,0,.55))}
+.modal{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;padding:1rem;overflow-y:auto}
+</style>
+</head>
+<body>
+
+<script type="application/json" id="state">{"gallery":[],"slider":[],"svcImg":{},"reels":[],"a1":"#8b5cf6","a2":"#ec4899"}</script>
+
+<nav class="fixed top-0 inset-x-0 z-40 backdrop-blur" style="background:color-mix(in srgb,var(--bg) 80%,transparent);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)">
+ <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+  <a href="#home" class="font-extrabold text-lg"><span class="gtext">LUSHINO</span> INV</a>
+  <div class="hidden lg:flex gap-4 text-sm muted" id="navLinks"></div>
+  <div class="flex items-center gap-2">
+   <button id="langBtn" class="card px-3 py-2 rounded-full text-sm font-semibold" aria-label="Language">🇬🇧 EN</button>
+   <button id="themeBtn" class="card px-3 py-2 rounded-full text-sm" aria-label="Theme">🌓</button>
+   <button id="adminBtn" class="text-sm px-3 py-2 rounded-full grad text-white font-semibold">Admin</button>
+   <button id="menuBtn" class="lg:hidden text-2xl px-2" aria-label="Menu">☰</button>
+  </div>
+ </div>
+ <div id="mmenu" class="hid lg:hidden px-4 pb-4 grid grid-cols-2 gap-3 muted"></div>
+</nav>
+
+<header id="home" class="hero min-h-screen flex items-center pt-24 pb-12 relative">
+ <div class="absolute inset-0" style="background:linear-gradient(var(--bg) -20%,transparent 40%,var(--bg) 110%);opacity:.85"></div>
+ <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-10 items-center relative">
+  <div>
+   <span class="chip inline-block mb-4" style="background:var(--card)" data-i18n="hero_tag">✨ Creative Studio · Tanzania</span>
+   <h1 class="text-4xl sm:text-6xl font-extrabold leading-tight">LUSHINO <span class="gtext">GRAPHICS</span> &amp; ART</h1>
+   <p class="text-xl mt-3 font-semibold"><span data-i18n="we_are">We are</span> <span id="typed" class="gtext cursor"></span></p>
+   <p class="muted mt-4 text-lg" data-i18n="hero_sub">We build websites and systems, and craft 2D graphics, motion design, prints and video edits that make brands unforgettable.</p>
+   <div class="flex flex-wrap gap-3 mt-8">
+    <a href="#gallery" class="grad text-white px-6 py-3 rounded-full font-semibold" data-i18n="view_work">View My Work</a>
+    <a href="#order" class="px-6 py-3 rounded-full font-semibold card" data-i18n="hire_me">Order Now</a>
+   </div>
+   <div class="flex gap-8 mt-10 text-center">
+    <div><div class="text-3xl font-extrabold gtext" data-n="6">0</div><div class="muted text-xs" data-i18n="stat_services">Services</div></div>
+    <div><div class="text-3xl font-extrabold gtext" data-n="2">0</div><div class="muted text-xs" data-i18n="stat_locations">Locations</div></div>
+    <div><div class="text-3xl font-extrabold gtext" data-n="100" data-s="%">0</div><div class="muted text-xs" data-i18n="stat_creative">Creative</div></div>
+   </div>
+  </div>
+  <div class="flex justify-center">
+   <svg viewBox="0 0 300 300" class="w-72 sm:w-96 blob" aria-hidden="true">
+    <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#ec4899"/></linearGradient></defs>
+    <path d="M150 20c60 0 120 40 120 110s-50 150-120 150S30 220 30 150 90 20 150 20z" fill="url(#g1)" opacity=".9"/>
+    <circle cx="110" cy="120" r="34" fill="#fff" opacity=".9"/><rect x="160" y="150" width="70" height="70" rx="16" fill="#fff" opacity=".25"/>
+    <polygon points="90,230 140,170 190,230" fill="#fff" opacity=".6"/>
+   </svg>
+  </div>
+ </div>
+</header>
+
+<section id="about" class="py-20 max-w-6xl mx-auto px-4">
+ <div class="reveal grid md:grid-cols-2 gap-10 items-center">
+  <div>
+   <h2 class="text-3xl sm:text-4xl font-extrabold"><span data-i18n="about_t1">About</span> <span class="gtext" data-i18n="about_t2">Us</span></h2>
+   <p class="muted mt-4" data-i18n="about_body">LUSHINO INV is the company behind LUSHINO GRAPHICS and ART. We combine technology and creativity to help businesses grow online and in print.</p>
+   <div class="mt-6 space-y-4" id="skills"></div>
+  </div>
+  <div>
+   <div id="aboutImg" class="cover rounded-3xl overflow-hidden aspect-[4/3] mb-4"></div>
+   <div class="grid grid-cols-2 gap-4">
+    <div class="card p-4"><div class="text-2xl">📍</div><b>Mbeya</b><p class="muted text-sm">Block - T</p></div>
+    <div class="card p-4"><div class="text-2xl">🌊</div><b>Dar es Salaam</b><p class="muted text-sm">Kigamboni</p></div>
+    <div class="card p-4"><div class="text-2xl">📧</div><b>Email</b><p class="muted text-xs break-all">mkgallerystore@gmail.com</p></div>
+    <div class="card p-4"><div class="text-2xl">📞</div><b>Phone</b><p class="muted text-sm">0786325748</p></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section class="py-14" style="background:color-mix(in srgb,var(--card) 50%,transparent)">
+ <div class="max-w-6xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-center" id="why"></div>
+</section>
+
+<section id="services" class="py-20 max-w-6xl mx-auto px-4">
+ <h2 class="text-3xl sm:text-4xl font-extrabold text-center reveal"><span data-i18n="svc_t1">What</span> <span class="gtext" data-i18n="svc_t2">We Do</span></h2>
+ <p class="muted text-center mt-2" data-i18n="svc_hint">Tap a card to see more.</p>
+ <div id="svc" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12"></div>
+</section>
+
+<section id="featured" class="py-20" style="background:color-mix(in srgb,var(--card) 50%,transparent)">
+ <div class="max-w-5xl mx-auto px-4">
+  <h2 class="text-3xl sm:text-4xl font-extrabold text-center reveal"><span data-i18n="feat_t1">Featured</span> <span class="gtext" data-i18n="feat_t2">Works</span></h2>
+  <div class="relative mt-10 rounded-3xl overflow-hidden aspect-[16/9]" id="slider"></div>
+  <div class="flex justify-center gap-3 mt-4"><button id="prev" class="card px-4 py-2 rounded-full">←</button><button id="next" class="card px-4 py-2 rounded-full">→</button></div>
+ </div>
+</section>
+
+<section id="reels" class="py-20 max-w-6xl mx-auto px-4">
+ <h2 class="text-3xl sm:text-4xl font-extrabold text-center reveal"><span data-i18n="reel_t1">Motion</span> <span class="gtext" data-i18n="reel_t2">Reels</span></h2>
+ <p class="muted text-center mt-2" data-i18n="reel_hint">Tap to play. Animations, promos and video edits.</p>
+ <div id="reelGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12"></div>
+</section>
+
+<section id="cases" class="py-20" style="background:color-mix(in srgb,var(--card) 50%,transparent)">
+ <div class="max-w-6xl mx-auto px-4">
+  <h2 class="text-3xl sm:text-4xl font-extrabold text-center reveal"><span data-i18n="case_t1">Project</span> <span class="gtext" data-i18n="case_t2">Case Studies</span></h2>
+  <p class="muted text-center mt-2" data-i18n="case_hint">Tap a project to see the client, the problem and the result.</p>
+  <div id="caseGrid" class="grid md:grid-cols-3 gap-6 mt-12"></div>
+ </div>
+</section>
+
+<section id="clients" class="py-20 max-w-6xl mx-auto px-4">
+ <h2 class="text-3xl sm:text-4xl font-extrabold text-center reveal"><span data-i18n="clients_t1">Trusted</span> <span class="gtext" data-i18n="clients_t2">By</span></h2>
+ <p class="muted text-center mt-2" data-i18n="clients_hint">Real feedback from clients across Tanzania.</p>
+ <div id="logoStrip" class="flex flex-wrap justify-center items-center gap-8 mt-10"></div>
+ <div id="testi" class="grid md:grid-cols-3 gap-6 mt-12"></div>
+</section>
+
+<section id="gallery" class="py-20 max-w-6xl mx-auto px-4">
+ <h2 class="text-3xl sm:text-4xl font-extrabold text-center reveal"><span data-i18n="gal_t1">Art</span> <span class="gtext" data-i18n="gal_t2">Gallery</span></h2>
+ <p class="muted text-center mt-2" data-i18n="gal_hint">Graphics, motion, prints and more. Tap an image to enlarge.</p>
+ <div id="chips" class="flex flex-wrap justify-center gap-2 mt-8"></div>
+ <div id="grid" class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-8"></div>
+</section>
+
+<section id="process" class="py-20" style="background:color-mix(in srgb,var(--card) 50%,transparent)">
+ <div class="max-w-6xl mx-auto px-4">
+  <h2 class="text-3xl sm:text-4xl font-extrabold text-center reveal"><span data-i18n="proc_t1">How We</span> <span class="gtext" data-i18n="proc_t2">Work</span></h2>
+  <div id="steps" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12"></div>
+ </div>
+</section>
+
+<section id="packages" class="py-20 max-w-6xl mx-auto px-4">
+ <h2 class="text-3xl sm:text-4xl font-extrabold text-center reveal"><span data-i18n="pkg_t1">Our</span> <span class="gtext" data-i18n="pkg_t2">Packages</span></h2>
+ <p class="muted text-center mt-2" data-i18n="pkg_hint">Contact us for a custom quote.</p>
+ <div id="pk" class="grid md:grid-cols-3 gap-6 mt-12"></div>
+</section>
+
+<section id="payment" class="py-20" style="background:color-mix(in srgb,var(--card) 50%,transparent)">
+ <div class="max-w-6xl mx-auto px-4">
+  <h2 class="text-3xl sm:text-4xl font-extrabold text-center reveal"><span data-i18n="pay_t1">Payment</span> <span class="gtext" data-i18n="pay_t2">Methods</span></h2>
+  <p class="muted text-center mt-2" data-i18n="pay_hint">Pay via mobile money or bank. Send the screenshot on WhatsApp.</p>
+  <div id="payGrid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12"></div>
+  <p class="text-center text-xs muted mt-6" data-i18n="pay_note">Always confirm the name LUSHINO INV before sending money.</p>
+ </div>
+</section>
+
+<section id="locations" class="py-20 max-w-6xl mx-auto px-4">
+ <h2 class="text-3xl sm:text-4xl font-extrabold text-center reveal"><span data-i18n="loc_t1">Our</span> <span class="gtext" data-i18n="loc_t2">Locations</span></h2>
+ <p class="muted text-center mt-2" data-i18n="loc_hint">Visit us in Mbeya or Kigamboni, Dar es Salaam.</p>
+ <div id="locGrid" class="grid md:grid-cols-2 gap-6 mt-12"></div>
+</section>
+
+<section id="blog" class="py-20" style="background:color-mix(in srgb,var(--card) 50%,transparent)">
+ <div class="max-w-6xl mx-auto px-4">
+  <h2 class="text-3xl sm:text-4xl font-extrabold text-center reveal"><span data-i18n="blog_t1">Tips</span> &amp; <span class="gtext" data-i18n="blog_t2">Blog</span></h2>
+  <p class="muted text-center mt-2" data-i18n="blog_hint">Design advice and printing tips from our studio.</p>
+  <div id="blogGrid" class="grid md:grid-cols-3 gap-6 mt-12"></div>
+ </div>
+</section>
+
+<section id="order" class="py-20 max-w-3xl mx-auto px-4">
+ <h2 class="text-3xl sm:text-4xl font-extrabold text-center reveal"><span data-i18n="ord_t1">Order</span> <span class="gtext" data-i18n="ord_t2">Now</span></h2>
+ <p class="muted text-center mt-2" data-i18n="ord_hint">Pick a service, quantity and location — we reply on WhatsApp.</p>
+ <div class="card p-6 mt-10" style="transform:none">
+  <label class="text-sm muted" data-i18n="ord_service">Service</label>
+  <select id="oService" class="inp my-2"></select>
+  <label class="text-sm muted mt-2" data-i18n="ord_qty">Quantity</label>
+  <input id="oQty" type="number" min="1" value="1" class="inp my-2">
+  <label class="text-sm muted mt-2" data-i18n="ord_size">Size / Specification</label>
+  <input id="oSize" class="inp my-2" placeholder="A3 banner / Logo + flyer">
+  <label class="text-sm muted mt-2" data-i18n="ord_loc">Delivery location</label>
+  <input id="oLoc" class="inp my-2" placeholder="Mbeya / Kigamboni / Dar es Salaam">
+  <label class="text-sm muted mt-2" data-i18n="ord_notes">Details</label>
+  <textarea id="oNotes" rows="3" class="inp my-2"></textarea>
+  <button id="oSend" class="grad text-white rounded-xl px-5 py-3 font-semibold w-full mt-3" data-i18n="ord_send">Send order via WhatsApp</button>
+ </div>
+</section>
+
+<section id="faq" class="py-20 max-w-3xl mx-auto px-4">
+ <h2 class="text-3xl sm:text-4xl font-extrabold text-center reveal"><span data-i18n="faq_t1">Common</span> <span class="gtext" data-i18n="faq_t2">Questions</span></h2>
+ <div id="faqs" class="mt-10 space-y-3"></div>
+</section>
+
+<section id="contact" class="py-20 max-w-5xl mx-auto px-4">
+ <h2 class="text-3xl sm:text-4xl font-extrabold text-center"><span data-i18n="ct_t1">Let's</span> <span class="gtext" data-i18n="ct_t2">Work Together</span></h2>
+ <div class="grid md:grid-cols-2 gap-8 mt-10">
+  <div class="grid gap-4 content-start">
+   <a href="mailto:mkgallerystore@gmail.com" class="card p-5 block"><div class="text-2xl">📧</div><b>mkgallerystore@gmail.com</b></a>
+   <a href="tel:+255786325748" class="card p-5 block"><div class="text-2xl">📞</div><b>0786325748</b></a>
+   <div class="card p-5"><div class="text-2xl">📍</div><b>Block - T, Mbeya</b><p class="muted text-sm" data-i18n="ct_also">Also Kigamboni, Dar es Salaam</p></div>
+  </div>
+  <div class="card p-6" style="transform:none">
+   <h3 class="font-bold mb-3" data-i18n="ct_wa">Send a message on WhatsApp</h3>
+   <input id="cn" class="inp mb-3" data-i18n-ph="ph_name" placeholder="Your name">
+   <select id="cs" class="inp mb-3"></select>
+   <textarea id="cm" rows="4" class="inp mb-3" data-i18n-ph="ph_msg" placeholder="Tell us about your project"></textarea>
+   <button id="send" class="grad text-white rounded-xl px-5 py-3 font-semibold w-full" data-i18n="ct_send">Send via WhatsApp</button>
+  </div>
+ </div>
+</section>
+
+<footer class="py-8 text-center muted text-sm" style="border-top:1px solid var(--line)">
+ © <span id="yr"></span> LUSHINO INV · LUSHINO GRAPHICS and ART · Mbeya &amp; Kigamboni, DSM
+ <div id="social" class="flex justify-center gap-4 mt-4"></div>
+</footer>
+
+<a id="waFloat" href="#" target="_blank" rel="noopener"
+   class="fixed right-5 z-40 flex items-center justify-center w-14 h-14 rounded-full shadow-2xl"
+   style="bottom:calc(4.5rem + env(safe-area-inset-bottom,0px));background:#25D366" aria-label="WhatsApp">
+ <svg viewBox="0 0 24 24" class="w-8 h-8" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20zm4.4-5.9c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.5 6.5 0 0 1-3.2-2.8c-.2-.4.2-.4.6-1.1.1-.2 0-.3 0-.4l-.7-1.6c-.2-.4-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2c0 1.3.9 2.6 1.1 2.8.1.2 1.9 3 4.7 4.1 2.3.9 2.8.7 3.3.7.5-.1 1.4-.6 1.6-1.2.2-.6.2-1.1.1-1.2-.1-.1-.2-.2-.5-.3z"/></svg>
+</a>
+<button id="top" class="hid fixed right-5 z-30 grad text-white w-12 h-12 rounded-full text-xl" style="bottom:calc(8.5rem + env(safe-area-inset-bottom,0px))">↑</button>
+
+<div id="lb" class="hid fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"><img id="lbi" class="max-h-[85vh] max-w-full rounded-xl" alt=""></div>
+
+<div id="caseModal" class="modal hid">
+ <div class="card p-6 w-full max-w-2xl my-8" style="transform:none">
+  <div class="flex justify-between items-start mb-4"><h3 id="cmTitle" class="text-2xl font-extrabold"></h3><button id="cmClose" class="text-2xl">✕</button></div>
+  <div id="cmBody" class="space-y-3 text-sm"></div>
+ </div>
+</div>
+
+<div id="vidModal" class="modal hid">
+ <div class="w-full max-w-lg">
+  <div class="flex justify-end mb-2"><button id="vidClose" class="text-white text-3xl">✕</button></div>
+  <div id="vidBody"></div>
+ </div>
+</div>
+
+<!-- LOGIN -->
+<div id="login" class="hid fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
+ <div class="card p-6 w-full max-w-sm" style="transform:none">
+  <h3 class="text-xl font-extrabold mb-4">Owner <span class="gtext">Login</span></h3>
+  <input id="em" type="email" placeholder="Owner email" class="inp mb-3" autocomplete="username">
+  <input id="pw" type="password" placeholder="Password" class="inp mb-3" autocomplete="current-password">
+  <p id="err" class="text-red-400 text-sm mb-2 hid">Only mkgallerystore@gmail.com with the correct password may log in.</p>
+  <div class="flex gap-2"><button id="doLogin" class="grad text-white rounded-xl px-5 py-2 font-semibold flex-1">Login</button><button id="cancelLogin" class="card px-4 py-2 rounded-xl">Cancel</button></div>
+ </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="panel" class="hid fixed inset-0 z-50 bg-black/70 overflow-y-auto p-4">
+ <div class="card p-6 w-full max-w-lg mx-auto my-8" style="transform:none">
+  <div class="flex justify-between items-center mb-4"><h3 class="text-xl font-extrabold">Admin <span class="gtext">Panel</span></h3><button id="closePanel" class="text-2xl">✕</button></div>
+  <p id="warn" class="hid text-amber-400 text-sm mb-3">Publishing needs you to be signed in to claude.ai as the page owner.</p>
+
+  <!-- TABS -->
+  <div class="flex gap-2 mb-4">
+   <button id="tabImg" class="chip act">🖼️ Image</button>
+   <button id="tabVid" class="chip">🎬 Video (Reel)</button>
+  </div>
+
+  <!-- IMAGE FORM -->
+  <div id="formImg">
+   <label class="text-sm muted">1. Choose image</label>
+   <input id="file" type="file" accept="image/*" class="inp my-2">
+   <label class="text-sm muted">2. Where should it appear?</label>
+   <select id="where" class="inp my-2"></select>
+   <input id="ttl" placeholder="Title (optional)" class="inp mb-3">
+   <button id="addImg" class="grad text-white rounded-xl px-5 py-2 font-semibold w-full">Add image</button>
+  </div>
+
+  <!-- VIDEO FORM -->
+  <div id="formVid" class="hid">
+   <label class="text-sm muted">1. Choose video (MP4)</label>
+   <input id="vfile" type="file" accept="video/*" class="inp my-2">
+   <label class="text-sm muted">2. Reel cover thumbnail (optional)</label>
+   <input id="vthumb" type="file" accept="image/*" class="inp my-2">
+   <input id="vttl" placeholder="Reel title (e.g. Logo Animation)" class="inp mb-2">
+   <p class="text-xs muted mb-2">If the video is large (>4MB), uploading may fail. Paste a direct MP4 URL below instead.</p>
+   <input id="vurl" placeholder="https://.../my-video.mp4 (optional)" class="inp mb-3">
+   <button id="addVid" class="grad text-white rounded-xl px-5 py-2 font-semibold w-full">Add video reel</button>
+  </div>
+
+  <hr class="my-5" style="border-color:var(--line)">
+  <label class="text-sm muted">Accent colours</label>
+  <div class="flex gap-3 my-2"><input id="c1" type="color" value="#8b5cf6"><input id="c2" type="color" value="#ec4899"></div>
+  <label class="text-sm flex gap-2 items-center mt-2"><input id="hideDemo" type="checkbox"> Hide sample artworks</label>
+  <hr class="my-5" style="border-color:var(--line)">
+  <b class="text-sm">Your uploads</b>
+  <div id="list" class="mt-2 space-y-2 text-sm"></div>
+  <button id="pub" class="grad text-white rounded-xl px-5 py-3 font-semibold w-full mt-5">Publish changes to everyone</button>
+  <p id="dirty" class="hid text-amber-400 text-xs mt-2">You have unpublished changes.</p>
+  <button id="logout" class="card px-4 py-2 rounded-xl w-full mt-3">Logout</button>
+ </div>
+</div>
+
+<script>
+const RAW=document.documentElement.outerHTML;
+/* ONLY this email + password hash accepted */
+const OWNER_EMAIL="mkgallerystore@gmail.com";
+const OWNER_HASH="a4e3443487139931a55b834e4827dbdeab3f99f72d86c928a602a443420178e9";
+const $=id=>document.getElementById(id);
+let S;try{S=JSON.parse($("state").textContent)}catch(e){S={}}
+S.gallery=S.gallery||[];S.slider=S.slider||[];S.svcImg=S.svcImg||{};S.reels=S.reels||[];
+let isAdmin=sessionStorage.getItem("adm")==="1",filter="All",dirty=false;
+
+/* ================= I18N ================= */
+const I18N={
+ en:{
+  nav:[["#about","About"],["#services","Services"],["#featured","Featured"],["#reels","Reels"],["#cases","Cases"],["#gallery","Gallery"],["#payment","Payment"],["#locations","Locations"],["#blog","Tips"],["#order","Order"],["#contact","Contact"]],
+  hero_tag:"✨ Creative Studio · Tanzania",we_are:"We are",
+  hero_sub:"We build websites and systems, and craft 2D graphics, motion design, prints and video edits that make brands unforgettable.",
+  view_work:"View My Work",hire_me:"Order Now",stat_services:"Services",stat_locations:"Locations",stat_creative:"Creative",
+  about_t1:"About",about_t2:"Us",
+  about_body:"LUSHINO INV is the company behind LUSHINO GRAPHICS and ART. We combine technology and creativity to help businesses grow online and in print, from custom web and software systems to eye-catching artwork, motion graphics and professional printing.",
+  svc_t1:"What",svc_t2:"We Do",svc_hint:"Tap a card to see more.",
+  feat_t1:"Featured",feat_t2:"Works",
+  reel_t1:"Motion",reel_t2:"Reels",reel_hint:"Tap to play. Animations, promos and video edits.",
+  case_t1:"Project",case_t2:"Case Studies",case_hint:"Tap a project to see the client, the problem and the result.",
+  clients_t1:"Trusted",clients_t2:"By",clients_hint:"Real feedback from clients across Tanzania.",
+  gal_t1:"Art",gal_t2:"Gallery",gal_hint:"Graphics, motion, prints and more. Tap an image to enlarge.",
+  proc_t1:"How We",proc_t2:"Work",
+  pkg_t1:"Our",pkg_t2:"Packages",pkg_hint:"Contact us for a custom quote.",
+  pay_t1:"Payment",pay_t2:"Methods",pay_hint:"Pay via mobile money or bank. Send the screenshot on WhatsApp.",pay_note:"Always confirm the name LUSHINO INV before sending money.",
+  loc_t1:"Our",loc_t2:"Locations",loc_hint:"Visit us in Mbeya or Kigamboni, Dar es Salaam.",
+  blog_t1:"Tips",blog_t2:"Blog",blog_hint:"Design advice and printing tips from our studio.",
+  ord_t1:"Order",ord_t2:"Now",ord_hint:"Pick a service, quantity and location — we reply on WhatsApp.",
+  ord_service:"Service",ord_qty:"Quantity",ord_size:"Size / Specification",ord_loc:"Delivery location",ord_notes:"Details",ord_send:"Send order via WhatsApp",
+  faq_t1:"Common",faq_t2:"Questions",
+  ct_t1:"Let's",ct_t2:"Work Together",ct_also:"Also Kigamboni, Dar es Salaam",ct_wa:"Send a message on WhatsApp",ct_send:"Send via WhatsApp",
+  ph_name:"Your name",ph_msg:"Tell us about your project",quote:"Get a quote",
+  services:[
+   ["🌐","Web Development","Fast, responsive and modern websites for businesses.","Business sites, portfolios, e-commerce and landing pages built to load fast on any phone."],
+   ["🖥️","System Development","Custom software and management systems.","Ticketing, inventory, school and office systems with user roles and databases."],
+   ["🎨","2D Graphics","Logos, posters, flyers and brand identity.","Complete brand kits, social media designs, posters and flyers."],
+   ["🎬","Motion Graphics","Animated intros, ads and social media motion.","Logo animations, promo videos and animated social posts."],
+   ["🖨️","Printing Services","High quality printing.","Banners, business cards, T-shirts, stickers and more, ready to print."],
+   ["📸","Photo & Video Editing","Professional retouching and editing.","Colour correction, retouching, event videos and reels."]],
+  skills:[["Web & Systems",90],["2D Graphics",95],["Motion Graphics",85],["Printing",90],["Video Editing",85]],
+  why:[["⚡","Fast Delivery"],["🎯","Detail Focused"],["📱","Mobile Ready"],["💬","Friendly Support"]],
+  steps:[["1","Discuss","Tell us your idea, goals and budget."],["2","Design","We create concepts and drafts for you."],["3","Build","We develop, animate or print the final work."],["4","Deliver","You review, approve and receive everything."]],
+  pkgs:[["Starter","Great for individuals",["Logo or poster design","2 revisions","Social media sizes"]],["Business","Most popular",["Website or system","Branding kit","Printing support","Priority help"]],["Premium","Complete creative",["Web + system","Motion graphics","Photo & video editing","Ongoing support"]]],
+  faqs:[["Which services do you offer?","Web and system development, 2D graphics, motion graphics, printing, and photo and video editing."],["Where are you located?","We work from Block - T, Mbeya and Kigamboni, Dar es Salaam."],["How can I order?","Use the Order Now form, message on WhatsApp, call 0786325748 or email mkgallerystore@gmail.com."],["Do you do printing too?","Yes, we design and print banners, cards, T-shirts and other materials."]],
+  typed:["a Web Developer","a Graphic Designer","a Motion Artist","a Print Specialist","a Video Editor"],
+  wa_float:"Hello LUSHINO, I found you on your website and I'd like to ask about your services.",
+  case_client:"Client",case_problem:"Problem",case_result:"Result",
+  hours:"Working hours",directions:"Get directions",read_more:"Read more"
+ },
+ sw:{
+  nav:[["#about","Kuhusu"],["#services","Huduma"],["#featured","Kazi Bora"],["#reels","Video"],["#cases","Miradi"],["#gallery","Picha"],["#payment","Malipo"],["#locations","Maeneo"],["#blog","Vidokezo"],["#order","Agiza"],["#contact","Mawasiliano"]],
+  hero_tag:"✨ Studio ya Ubunifu · Tanzania",we_are:"Sisi ni",
+  hero_sub:"Tunajenga tovuti na mifumo, na kubuni picha za 2D, michoro ya mwendo, uchapishaji na uhariri wa video vinavyofanya chapa zikumbukwe.",
+  view_work:"Tazama Kazi Zangu",hire_me:"Agiza Sasa",stat_services:"Huduma",stat_locations:"Maeneo",stat_creative:"Ubunifu",
+  about_t1:"Kuhusu",about_t2:"Sisi",
+  about_body:"LUSHINO INV ni kampuni inayomiliki LUSHINO GRAPHICS na ART. Tunaunganisha teknolojia na ubunifu kusaidia biashara kukua mtandaoni na kwenye uchapishaji.",
+  svc_t1:"Tunachofanya",svc_t2:"",svc_hint:"Gusa kadi kuona zaidi.",
+  feat_t1:"Kazi",feat_t2:"Bora",
+  reel_t1:"Video za",reel_t2:"Mwendo",reel_hint:"Gusa kucheza. Uhuishaji, matangazo na uhariri wa video.",
+  case_t1:"Uchunguzi wa",case_t2:"Miradi",case_hint:"Gusa mradi kuona mteja, tatizo na matokeo.",
+  clients_t1:"Tunaaminiwa",clients_t2:"Na",clients_hint:"Maoni halisi kutoka kwa wateja kote Tanzania.",
+  gal_t1:"Picha",gal_t2:"za Sanaa",gal_hint:"Picha, michoro, uchapishaji na zaidi. Gusa picha kuikuza.",
+  proc_t1:"Jinsi",proc_t2:"Tunavyofanya Kazi",
+  pkg_t1:"Vifurushi",pkg_t2:"Vyetu",pkg_hint:"Wasiliana nasi kwa bei maalum.",
+  pay_t1:"Njia za",pay_t2:"Malipo",pay_hint:"Lipa kwa simu au benki. Tuma picha ya malipo kwa WhatsApp.",pay_note:"Hakikisha jina ni LUSHINO INV kabla ya kutuma pesa.",
+  loc_t1:"Maeneo",loc_t2:"Yetu",loc_hint:"Tembelea Mbeya au Kigamboni, Dar es Salaam.",
+  blog_t1:"Vidokezo",blog_t2:"na Makala",blog_hint:"Ushauri wa ubunifu na uchapishaji kutoka studio yetu.",
+  ord_t1:"Agiza",ord_t2:"Sasa",ord_hint:"Chagua huduma, idadi na mahali — tunajibu kwa WhatsApp.",
+  ord_service:"Huduma",ord_qty:"Idadi",ord_size:"Ukubwa / Maelezo",ord_loc:"Mahali pa kupeleka",ord_notes:"Maelezo",ord_send:"Tuma oda kwa WhatsApp",
+  faq_t1:"Maswali",faq_t2:"Yanayoulizwa",
+  ct_t1:"Tufanye",ct_t2:"Kazi Pamoja",ct_also:"Pia Kigamboni, Dar es Salaam",ct_wa:"Tuma ujumbe kwa WhatsApp",ct_send:"Tuma kwa WhatsApp",
+  ph_name:"Jina lako",ph_msg:"Tuambie kuhusu mradi wako",quote:"Pata bei",
+  services:[
+   ["🌐","Uendelezaji wa Tovuti","Tovuti za haraka, zinazofaa simu na za kisasa kwa biashara.","Tovuti za biashara, portfolio, biashara mtandaoni na kurasa za kutua zinazopakia haraka kwenye simu yoyote."],
+   ["🖥️","Uendelezaji wa Mifumo","Programu maalum na mifumo ya usimamizi.","Mifumo ya tiketi, stoo, shule na ofisi yenye majukumu ya watumiaji na hifadhidata."],
+   ["🎨","Picha za 2D","Nembo, mabango, vipeperushi na utambulisho wa chapa.","Vifaa kamili vya chapa, picha za mitandao ya kijamii, mabango na vipeperushi."],
+   ["🎬","Michoro ya Mwendo","Utangulizi wa uhuishaji, matangazo na michoro ya mitandao ya kijamii.","Uhuishaji wa nembo, video za matangazo na machapisho ya mitandao ya kijamii."],
+   ["🖨️","Huduma za Uchapishaji","Uchapishaji wa ubora wa juu.","Mabango, kadi za biashara, T-shirt, stika na zaidi, tayari kuchapishwa."],
+   ["📸","Uhariri wa Picha na Video","Urekebishaji wa kitaalamu na uhariri.","Urekebishaji wa rangi, urekebishaji wa picha, video za matukio na reels."]],
+  skills:[["Tovuti na Mifumo",90],["Picha za 2D",95],["Michoro ya Mwendo",85],["Uchapishaji",90],["Uhariri wa Video",85]],
+  why:[["⚡","Huduma ya Haraka"],["🎯","Umakini wa Kina"],["📱","Inafaa Simu"],["💬","Msaada wa Kirafiki"]],
+  steps:[["1","Jadili","Tuambie wazo lako, malengo na bajeti."],["2","Buni","Tunaunda michoro na rasimu kwako."],["3","Jenga","Tunatengeneza, kuhuisha au kuchapisha kazi ya mwisho."],["4","Kwasilisha","Unakagua, kuidhinisha na kupokea kila kitu."]],
+  pkgs:[["Msingi","Nzuri kwa watu binafsi",["Ubunifu wa nembo au bango","Marekebisho 2","Ukubwa wa mitandao ya kijamii"]],["Biashara","Maarufu zaidi",["Tovuti au mfumo","Vifaa vya chapa","Msaada wa uchapishaji","Msaada wa kipaumbele"]],["Premium","Ubunifu kamili",["Tovuti + mfumo","Michoro ya mwendo","Uhariri wa picha na video","Msaada endelevu"]]],
+  faqs:[["Mnatoa huduma gani?","Uendelezaji wa tovuti na mifumo, picha za 2D, michoro ya mwendo, uchapishaji, na uhariri wa picha na video."],["Mko wapi?","Tunafanya kazi kutoka Block - T, Mbeya na Kigamboni, Dar es Salaam."],["Nawezaje kuagiza?","Tumia fomu ya Agiza Sasa, tuma ujumbe kwa WhatsApp, piga 0786325748 au barua pepe mkgallerystore@gmail.com."],["Mnachapisha pia?","Ndiyo, tunabuni na kuchapisha mabango, kadi, T-shirt na vifaa vingine."]],
+  typed:["Mtengenezaji wa Tovuti","Mbunifu wa Picha","Msanii wa Michoro","Mtaalamu wa Uchapishaji","Mhariri wa Video"],
+  wa_float:"Habari LUSHINO, nimekupata kwenye tovuti yako na ningependa kuuliza kuhusu huduma zenu.",
+  case_client:"Mteja",case_problem:"Tatizo",case_result:"Matokeo",
+  hours:"Saa za kazi",directions:"Pata maelekezo",read_more:"Soma zaidi"
+ }
+};
+let lang=localStorage.getItem("lang")||"en";
+const T=()=>I18N[lang];
+
+/* ================= DATA ================= */
+const pal=[["#8b5cf6","#ec4899"],["#06b6d4","#3b82f6"],["#f59e0b","#ef4444"],["#10b981","#06b6d4"],["#ec4899","#f59e0b"],["#6366f1","#a855f7"],["#14b8a6","#84cc16"],["#f43f5e","#8b5cf6"]];
+function art(i){const [a,b]=pal[i%8];const uid="g"+i+Math.random().toString(36).slice(2,6);return `<svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="200" height="200" fill="url(#${uid})"/><circle cx="${60+i*9}" cy="${70+(i%3)*25}" r="${35+i*3}" fill="#fff" opacity=".25"/><rect x="${100-i*4}" y="110" width="70" height="70" rx="${10+i*4}" fill="#fff" opacity=".3" transform="rotate(${i*12} 135 145)"/><polygon points="20,190 70,120 120,190" fill="#000" opacity=".15"/></svg>`}
+
+/* Base default reels (always shown). Admin-added reels come from S.reels */
+const BASE_REELS=[
+ {src:"",thumb:art(0),t:lang==="sw"?"Nembo ya Mwendo":"Logo Animation"},
+ {src:"",thumb:art(2),t:lang==="sw"?"Tangazo la Bidhaa":"Product Promo"},
+ {src:"",thumb:art(4),t:lang==="sw"?"Video ya Tukio":"Event Video"},
+ {src:"",thumb:art(6),t:lang==="sw"?"Reel ya Mitandao":"Social Reel"}
+];
+const CASES=[
+ {t:lang==="sw"?"Chapa ya Mgahawa":"Restaurant Brand",client:"Mbeya Grill",problem:lang==="sw"?"Hakuna utambulisho wa chapa, mauzo ya chini":"No brand identity, low walk-ins",result:lang==="sw"?"Nembo mpya + mabango: mauzo yaliongezeka 40%":"New logo + banners: walk-ins up 40%"},
+ {t:lang==="sw"?"Tovuti ya Duka":"Shop Website",client:"Kigamboni Boutique",problem:lang==="sw"?"Mauzo kwa simu tu, hakuna tovuti":"Phone orders only, no web presence",result:lang==="sw"?"Tovuti mpya: oda 3x zaidi kwa mwezi":"New site: 3x orders per month"},
+ {t:lang==="sw"?"Uchapishaji wa T-shirt":"T-shirt Printing",client:"Dar Youth Group",problem:lang==="sw"?"Ubora duni wa uchapishaji":"Poor print quality from old supplier",result:lang==="sw"?"Uchapishaji safi, wateja wamerudi":"Clean prints, repeat orders"}
+];
+const PAYMENTS=[
+ {n:"M-Pesa",c:"#E60000",icon:"📱",detail:"0786 325 748",holder:"LUSHINO INV"},
+ {n:"Tigo Pesa",c:"#0057B8",icon:"📲",detail:"0786 325 748",holder:"LUSHINO INV"},
+ {n:"Airtel Money",c:"#E40000",icon:"📱",detail:"0786 325 748",holder:"LUSHINO INV"},
+ {n:"Bank Transfer",c:"#0A7D3B",icon:"🏦",detail:"NMB / CRDB",holder:"Ask us for account no."}
+];
+const LOCATIONS=[
+ {name:"Mbeya",addr:"Block - T, Mbeya",hours:"Mon–Sat 08:00–18:00 · Sun Closed",map:"https://www.google.com/maps?q=Block+T+Mbeya+Tanzania"},
+ {name:"Kigamboni, Dar es Salaam",addr:"Kigamboni, DSM",hours:"Mon–Sat 08:00–18:00 · Sun Closed",map:"https://www.google.com/maps?q=Kigamboni+Dar+es+Salaam"}
+];
+const BLOG=[
+ {t:lang==="sw"?"Jinsi ya kubuni nembo nzuri":"How to design a good logo",b:lang==="sw"?"Nembo nzuri ni rahisi, inakumbukwa, na inafaa rangi na ukubwa wowote.":"A good logo is simple, memorable, and works in any colour and size."},
+ {t:lang==="sw"?"Mabango: ukubwa na ubora":"Banners: size and quality",b:lang==="sw"?"Tumia picha zenye azimio la juu na ukubwa unaofaa eneo lako.":"Use high-resolution images and match the size to your location."},
+ {t:lang==="sw"?"Rangi za chapa yako":"Choosing brand colours",b:lang==="sw"?"Chagua rangi 2–3 tu na zitumie kwa uthabiti kila mahali.":"Pick 2–3 colours and use them consistently everywhere."}
+];
+
+/* ================= RENDER ================= */
+function renderNav(){const h=T().nav.map(n=>`<a href="${n[0]}">${n[1]}</a>`).join("");$("navLinks").innerHTML=h;$("mmenu").innerHTML=h}
+function renderSkills(){$("skills").innerHTML=T().skills.map(s=>`<div><div class="flex justify-between text-sm"><span>${s[0]}</span><span class="muted">${s[1]}%</span></div><div class="bar"><i data-w="${s[1]}"></i></div></div>`).join("")}
+function renderWhy(){$("why").innerHTML=T().why.map(w=>`<div class="card p-5 reveal on"><div class="text-3xl">${w[0]}</div><b class="text-sm">${w[1]}</b></div>`).join("")}
+function renderSvc(){$("svc").innerHTML=T().services.map((s,i)=>`<div class="card overflow-hidden cursor-pointer reveal on" data-i="${i}">${S.svcImg[i]?`<div class="cover aspect-[16/9]"><img src="${S.svcImg[i]}" alt="${s[1]}"></div>`:""}<div class="p-6"><div class="w-14 h-14 rounded-2xl grad flex items-center justify-center text-2xl mb-4">${s[0]}</div><h3 class="font-bold text-lg">${s[1]}</h3><p class="muted text-sm mt-2">${s[2]}</p><p class="det hid text-sm mt-3">${s[3]}</p></div></div>`).join("")}
+function renderAbout(){$("aboutImg").innerHTML=S.about?`<img src="${S.about}" alt="About">`:art(3)}
+function renderSteps(){$("steps").innerHTML=T().steps.map(s=>`<div class="card p-6 reveal on"><div class="w-12 h-12 rounded-full grad text-white flex items-center justify-center font-bold mb-3">${s[0]}</div><h3 class="font-bold">${s[1]}</h3><p class="muted text-sm mt-1">${s[2]}</p></div>`).join("")}
+function renderPkgs(){$("pk").innerHTML=T().pkgs.map((p,i)=>`<div class="card p-6 reveal on ${i==1?"ring-2 ring-fuchsia-500":""}"><h3 class="text-xl font-extrabold">${p[0]}</h3><p class="muted text-sm">${p[1]}</p><ul class="my-4 space-y-2 text-sm">${p[2].map(x=>`<li>✅ ${x}</li>`).join("")}</ul><a href="#order" class="grad text-white rounded-xl px-5 py-2 font-semibold block text-center">${T().quote}</a></div>`).join("")}
+function renderFaqs(){$("faqs").innerHTML=T().faqs.map(f=>`<div class="faq card p-5 cursor-pointer"><b>${f[0]} <span class="float-right">+</span></b><p class="muted text-sm">${f[1]}</p></div>`).join("");document.querySelectorAll(".faq").forEach(f=>f.onclick=()=>f.classList.toggle("open"))}
+function renderSelects(){const o=T().services.map(s=>`<option>${s[1]}</option>`).join("");$("oService").innerHTML=o;$("cs").innerHTML=o}
+function renderSlider(){
+ const base=[{svg:art(0),t:T().feat_t1},{svg:art(2),t:T().feat_t1},{svg:art(1),t:T().feat_t1}];
+ const extra=S.slider.map(x=>({src:x.src,t:x.t||"Featured work"}));
+ const all=base.concat(extra);
+ $("slider").innerHTML=all.map((x,i)=>`<div class="slide cover ${i===0?"on":""}">${x.src?`<img src="${x.src}" alt="${x.t}">`:x.svg}<div class="cap"><b class="text-lg">${x.t}</b></div></div>`).join("");
+}
+function renderGallery(){
+ const cats=["All","Graphics","Motion","Printing","Photo"];
+ const demo=[
+  ["Neon Logo","Graphics",0],["Poster Design","Graphics",1],["Motion Intro","Motion",2],["Business Cards","Printing",3],
+  ["Brand Identity","Graphics",4],["Video Edit","Motion",5],["Banner Print","Printing",6],["Portrait Retouch","Photo",7]
+ ];
+ const all=[];
+ if(!S.hideDemo)demo.forEach(d=>all.push({t:d[0],c:d[1],svg:art(d[2])}));
+ S.gallery.forEach(g=>all.push({t:g.t,c:g.c,src:g.src}));
+ if(!cats.includes(filter))filter="All";
+ $("chips").innerHTML=cats.map(c=>`<button class="chip ${c===filter?"act":""}" data-c="${c}">${c}</button>`).join("");
+ $("grid").innerHTML=all.filter(x=>filter==="All"||x.c===filter).map(x=>`<div class="tile" ${x.src?`data-src="${x.src}"`:""}>${x.src?`<img src="${x.src}" alt="${x.t}">`:x.svg}<div class="cap"><b class="text-sm">${x.t}</b><div class="text-xs opacity-80">${x.c}</div></div></div>`).join("");
+ $("chips").onclick=e=>{const c=e.target.dataset.c;if(c){filter=c;renderGallery()}};
+}
+function renderClients(){$("logoStrip").innerHTML="";$("testi").innerHTML=""}
+function renderSocial(){
+ const S2=[["Instagram","https://instagram.com/lushino_inv","#E1306C"],["TikTok","https://tiktok.com/@lushino_inv","#111"],["Facebook","https://facebook.com/lushinoinv","#1877F2"],["YouTube","https://youtube.com/@lushinoinv","#FF0000"]];
+ $("social").innerHTML=S2.map(([n,u,c])=>`<a href="${u}" target="_blank" rel="noopener" title="${n}" class="w-11 h-11 rounded-full flex items-center justify-center font-bold text-white text-xs" style="background:${c}">${n[0]}${n[1]}</a>`).join("");
+}
+function renderWaFloat(){$("waFloat").href=`https://wa.me/255786325748?text=${encodeURIComponent(T().wa_float)}`}
+
+/* REELS: base + admin-added (S.reels) */
+function allReels(){
+ return BASE_REELS.concat(S.reels);
+}
+function renderReels(){
+ const all=allReels();
+ $("reelGrid").innerHTML=all.map((r,i)=>{
+  const poster=r.thumb?`poster="${r.thumb}"`:"";
+  return `<div class="reel" data-reel="${i}">${r.src?`<video muted playsinline preload="metadata" ${poster}><source src="${r.src}" type="video/mp4"></video>`:(r.thumb?`<img src="${r.thumb}" alt="${r.t}">`:art(0))}<div class="play">▶</div><div class="cap"><b class="text-xs">${r.t}</b></div></div>`;
+ }).join("");
+ document.querySelectorAll(".reel").forEach(el=>el.onclick=()=>{
+  const r=allReels()[+el.dataset.reel];
+  $("vidBody").innerHTML=r.src?`<video src="${r.src}" controls autoplay class="w-full rounded-xl" style="max-height:80vh"></video>`:`<div class="card p-8 text-center" style="transform:none"><div class="text-5xl mb-3">🎬</div><b>${r.t}</b><p class="muted text-sm mt-2">${lang==="sw"?"Video itaongezwa hivi karibuni.":"Video coming soon."}</p></div>`;
+  $("vidModal").classList.remove("hid");
+ });
+}
+function renderCases(){
+ $("caseGrid").innerHTML=CASES.map((c,i)=>`<div class="card p-6 reveal on cursor-pointer" data-case="${i}" style="transform:none"><div class="text-2xl mb-2">📁</div><h3 class="font-bold">${c.t}</h3><p class="muted text-sm mt-1">${c.client}</p><p class="text-sm mt-3 text-fuchsia-400 font-semibold">${T().read_more} →</p></div>`).join("");
+ document.querySelectorAll("[data-case]").forEach(el=>el.onclick=()=>{
+  const c=CASES[+el.dataset.case];
+  $("cmTitle").textContent=c.t;
+  $("cmBody").innerHTML=`<div><b class="text-fuchsia-400">${T().case_client}:</b> ${c.client}</div><div><b class="text-fuchsia-400">${T().case_problem}:</b> ${c.problem}</div><div><b class="text-emerald-400">${T().case_result}:</b> ${c.result}</div>`;
+  $("caseModal").classList.remove("hid");
+ });
+}
+function renderPay(){$("payGrid").innerHTML=PAYMENTS.map(p=>`<div class="card p-5 reveal on" style="transform:none"><div class="text-3xl mb-2">${p.icon}</div><b style="color:${p.c}">${p.n}</b><p class="text-lg font-semibold mt-1">${p.detail}</p><p class="muted text-xs">${p.holder}</p></div>`).join("")}
+function renderLoc(){$("locGrid").innerHTML=LOCATIONS.map(l=>`<div class="card overflow-hidden reveal on" style="transform:none"><iframe src="https://maps.google.com/maps?q=${encodeURIComponent(l.addr)}&output=embed" class="w-full h-56 border-0" loading="lazy"></iframe><div class="p-5"><b class="text-lg">📍 ${l.name}</b><p class="muted text-sm mt-1">${l.addr}</p><p class="text-sm mt-2"><b>${T().hours}:</b> ${l.hours}</p><a href="${l.map}" target="_blank" class="grad text-white rounded-xl px-4 py-2 font-semibold inline-block mt-3 text-sm">${T().directions} →</a></div></div>`).join("")}
+function renderBlog(){$("blogGrid").innerHTML=BLOG.map(b=>`<div class="card p-6 reveal on" style="transform:none"><div class="text-2xl mb-2">📝</div><h3 class="font-bold">${b.t}</h3><p class="muted text-sm mt-2">${b.b}</p></div>`).join("")}
+
+/* typed */
+let wi=0,ci=0,del=false,timer;
+function typeLoop(){const words=T().typed,w=words[wi]||"";$("typed").textContent=w.slice(0,ci);if(!del&&ci===w.length){del=true;timer=setTimeout(typeLoop,1300);return}if(del&&ci===0){del=false;wi=(wi+1)%words.length}ci+=del?-1:1;timer=setTimeout(typeLoop,del?40:90)}
+
+function look(){const r=document.documentElement.style;if(S.a1)r.setProperty("--a1",S.a1);if(S.a2)r.setProperty("--a2",S.a2);const h=document.querySelector(".hero");if(h)h.style.backgroundImage=S.hero?`url(${S.hero})`:""}
+function renderAll(){
+ look();renderNav();renderSkills();renderWhy();renderSvc();renderAbout();renderSteps();renderPkgs();renderFaqs();renderSelects();renderSlider();renderGallery();renderClients();renderSocial();renderWaFloat();renderReels();renderCases();renderPay();renderLoc();renderBlog();renderList();
+}
+function applyLang(){
+ document.documentElement.lang=lang;
+ document.querySelectorAll("[data-i18n]").forEach(el=>{const k=el.dataset.i18n;if(T()[k]!==undefined)el.textContent=T()[k]});
+ document.querySelectorAll("[data-i18n-ph]").forEach(el=>{const k=el.dataset.i18nPh;if(T()[k])el.placeholder=T()[k]});
+ $("langBtn").textContent=lang==="en"?"🇬🇧 EN":"🇹🇿 SW";
+ clearTimeout(timer);wi=0;ci=0;del=false;typeLoop();
+ renderAll();
+}
+$("langBtn").onclick=()=>{lang=lang==="en"?"sw":"en";localStorage.setItem("lang",lang);applyLang()};
+
+/* slider */
+let sl=0;
+function go(d){const s=document.querySelectorAll(".slide");if(!s.length)return;sl=(sl+d+s.length)%s.length;s.forEach((e,i)=>e.classList.toggle("on",i===sl))}
+$("prev").onclick=()=>go(-1);$("next").onclick=()=>go(1);
+setInterval(()=>go(1),5000);
+
+/* WhatsApp */
+function waOpen(t){window.open("https://wa.me/255786325748?text="+encodeURIComponent(t),"_blank")}
+$("oSend").onclick=()=>{
+ const svc=$("oService").value,qty=$("oQty").value||1,size=$("oSize").value,loc=$("oLoc").value,notes=$("oNotes").value;
+ waOpen(lang==="sw"
+  ?`Habari LUSHINO, nataka kuagiza:\n• Huduma: ${svc}\n• Idadi: ${qty}\n• Ukubwa: ${size}\n• Mahali: ${loc}\n• Maelezo: ${notes}`
+  :`Hello LUSHINO, I'd like to order:\n• Service: ${svc}\n• Quantity: ${qty}\n• Size: ${size}\n• Location: ${loc}\n• Details: ${notes}`);
+};
+$("send").onclick=()=>{
+ const name=$("cn").value||(lang==="sw"?"mgeni":"a visitor"),svc=$("cs").value,msg=$("cm").value;
+ waOpen(lang==="sw"?`Habari LUSHINO, mimi ni ${name}. Huduma: ${svc}. ${msg}`:`Hello LUSHINO, I'm ${name}. Service: ${svc}. ${msg}`);
+};
+
+/* ================= ADMIN ================= */
+const places=[["hero","Hero background"],["about","About section photo"],["slider","Featured Works slider"],...["Graphics","Motion","Printing","Photo"].map(c=>["g:"+c,"Gallery · "+c]),...T().services.map((s,i)=>["s"+i,"Service card · "+s[1]])];
+function renderWhere(){const cur=$("where").value;$("where").innerHTML=places.map(p=>`<option value="${p[0]}">${p[1]}</option>`).join("");if(cur)$("where").value=cur}
+function readImg(file,max,cb){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height));const c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;c.getContext("2d").drawImage(im,0,0,c.width,c.height);cb(c.toDataURL("image/jpeg",.75))};im.src=r.result};r.readAsDataURL(file)}
+function readFileDataURL(file,cb){const r=new FileReader();r.onload=()=>cb(r.result);r.readAsDataURL(file)}
+function mark(){dirty=true;$("dirty").classList.remove("hid");renderAll()}
+
+/* tabs */
+$("tabImg").onclick=()=>{$("tabImg").classList.add("act");$("tabVid").classList.remove("act");$("formImg").classList.remove("hid");$("formVid").classList.add("hid")};
+$("tabVid").onclick=()=>{$("tabVid").classList.add("act");$("tabImg").classList.remove("act");$("formVid").classList.remove("hid");$("formImg").classList.add("hid")};
+
+/* add image */
+$("addImg").onclick=()=>{
+ const f=$("file").files[0];if(!f){alert("Choose an image first");return}
+ const w=$("where").value,t=$("ttl").value||"";
+ readImg(f,w==="hero"?1400:900,src=>{
+  if(w==="hero")S.hero=src;
+  else if(w==="about")S.about=src;
+  else if(w==="slider")S.slider.push({src,t});
+  else if(w[0]==="g")S.gallery.push({src,t:t||"Untitled",c:w.slice(2)});
+  else S.svcImg[w.slice(1)]=src;
+  $("file").value="";$("ttl").value="";mark();
+ });
+};
+
+/* add video reel */
+$("addVid").onclick=()=>{
+ const vf=$("vfile").files[0];
+ const url=$("vurl").value.trim();
+ const title=$("vttl").value||(lang==="sw"?"Reel Mpya":"New Reel");
+ const thumbFile=$("vthumb").files[0];
+
+ if(!vf&&!url){alert("Choose a video file or paste an MP4 URL");return}
+
+ // if URL given, use it directly
+ if(url){
+  const push=(thumb)=>{
+   S.reels.push({src:url,thumb:thumb||"",t:title});
+   $("vfile").value="";$("vurl").value="";$("vttl").value="";$("vthumb").value="";mark();
+  };
+  if(thumbFile)readImg(thumbFile,600,push);else push("");
+  return;
+ }
+
+ // else read video file as data URL (may be large)
+ if(vf.size>4*1024*1024){
+  if(!confirm("This video is "+(vf.size/1048576).toFixed(1)+"MB. Large files may fail to save in the page state. Continue anyway?"))return;
+ }
+ readFileDataURL(vf,vidSrc=>{
+  const push=(thumb)=>{
+   S.reels.push({src:vidSrc,thumb:thumb||"",t:title});
+   $("vfile").value="";$("vurl").value="";$("vttl").value="";$("vthumb").value="";mark();
+  };
+  if(thumbFile)readImg(thumbFile,600,push);else push("");
+ });
+};
+
+/* list */
+function renderList(){
+ const rows=[];
+ if(S.hero)rows.push(["Hero background","hero"]);
+ if(S.about)rows.push(["About photo","about"]);
+ S.slider.forEach((x,i)=>rows.push(["Slider: "+(x.t||""),"slider:"+i]));
+ S.gallery.forEach((x,i)=>rows.push([`Gallery (${x.c}): ${x.t}`,"gal:"+i]));
+ Object.keys(S.svcImg).forEach(k=>rows.push(["Service: "+(T().services[k]?T().services[k][1]:k),"svc:"+k]));
+ S.reels.forEach((x,i)=>rows.push([`🎬 Reel: ${x.t}`,"reel:"+i]));
+ $("list").innerHTML=rows.length?rows.map(r=>`<div class="flex justify-between items-center card p-2 px-3" style="transform:none"><span class="truncate">${r[0]}</span><button data-d="${r[1]}" class="text-red-400 ml-2">Delete</button></div>`).join(""):'<p class="muted">No uploads yet.</p>';
+}
+$("list").onclick=e=>{const d=e.target.dataset.d;if(!d)return;const [t,i]=d.split(":");if(t==="hero")delete S.hero;else if(t==="about")delete S.about;else if(t==="slider")S.slider.splice(+i,1);else if(t==="gal")S.gallery.splice(+i,1);else if(t==="reel")S.reels.splice(+i,1);else delete S.svcImg[i];mark()};
+$("c1").oninput=$("c2").oninput=()=>{S.a1=$("c1").value;S.a2=$("c2").value;mark()};
+$("hideDemo").onchange=e=>{S.hideDemo=e.target.checked;mark()};
+$("pub").onclick=async()=>{
+ const a=window.claude?await claude.use("artifact"):null;
+ if(!a){$("warn").classList.remove("hid");return}
+ const d=new DOMParser().parseFromString(RAW,"text/html");
+ d.querySelectorAll("style:not(#mystyle)").forEach(e=>e.remove());
+ d.getElementById("state").textContent=JSON.stringify(S).replace(/</g,"\\u003c");
+ try{await a.publish("<!DOCTYPE html>\n"+d.documentElement.outerHTML);dirty=false;$("dirty").classList.add("hid")}
+ catch(e){if(e&&e.code==="conflict")return;$("warn").classList.remove("hid");alert("Publish failed: "+((e&&(e.code||e.message))||e))}
+};
+async function sha(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
+function syncAdminBtn(){$("adminBtn").textContent=isAdmin?"Panel":"Admin"}
+$("adminBtn").onclick=()=>{
+ if(isAdmin){renderWhere();renderList();$("panel").classList.remove("hid")}
+ else $("login").classList.remove("hid");
+};
+$("cancelLogin").onclick=()=>$("login").classList.add("hid");
+$("closePanel").onclick=()=>$("panel").classList.add("hid");
+$("doLogin").onclick=async()=>{
+ let ok=false;
+ try{ok=$("em").value.trim().toLowerCase()===OWNER_EMAIL&&await sha($("pw").value)===OWNER_HASH}catch(e){}
+ if(ok){
+  isAdmin=true;sessionStorage.setItem("adm","1");
+  $("login").classList.add("hid");$("err").classList.add("hid");$("pw").value="";
+  syncAdminBtn();
+  $("c1").value=S.a1||"#8b5cf6";$("c2").value=S.a2||"#ec4899";
+  $("hideDemo").checked=!!S.hideDemo;
+  renderWhere();renderList();
+  $("panel").classList.remove("hid");
+ }else $("err").classList.remove("hid");
+};
+$("logout").onclick=()=>{isAdmin=false;sessionStorage.removeItem("adm");$("panel").classList.add("hid");syncAdminBtn()};
+
+/* misc */
+$("menuBtn").onclick=()=>$("mmenu").classList.toggle("hid");
+$("mmenu").onclick=()=>$("mmenu").classList.add("hid");
+$("themeBtn").onclick=()=>{const r=document.documentElement,dk=getComputedStyle(r).colorScheme==="dark";r.dataset.theme=dk?"light":"dark"};
+$("top").onclick=()=>scrollTo({top:0,behavior:"smooth"});
+addEventListener("scroll",()=>$("top").classList.toggle("hid",scrollY<600),{passive:true});
+$("yr").textContent=new Date().getFullYear();
+$("svc").onclick=e=>{const c=e.target.closest("[data-i]");if(c)c.querySelector(".det").classList.toggle("hid")};
+$("grid").onclick=e=>{const t=e.target.closest(".tile");if(t&&t.dataset.src){$("lbi").src=t.dataset.src;$("lb").classList.remove("hid")}};
+$("lb").onclick=()=>$("lb").classList.add("hid");
+$("cmClose").onclick=()=>$("caseModal").classList.add("hid");
+$("caseModal").onclick=e=>{if(e.target.id==="caseModal")$("caseModal").classList.add("hid")};
+$("vidClose").onclick=()=>{$("vidModal").classList.add("hid");$("vidBody").innerHTML=""};
+
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("on");e.target.querySelectorAll("[data-w]").forEach(b=>b.style.width=b.dataset.w+"%");if(e.target.dataset.n)count(e.target)}}),{threshold:.15});
+function count(el){if(el.done)return;el.done=1;const n=+el.dataset.n,s=el.dataset.s||"";let v=0;const t=setInterval(()=>{v+=Math.ceil(n/30);if(v>=n){v=n;clearInterval(t)}el.textContent=v+s},40)}
+function observeReveals(){document.querySelectorAll(".reveal,[data-n]").forEach(el=>io.observe(el))}
+
+applyLang();syncAdminBtn();observeReveals();
+</script>
+</body></html>
