@@ -228,7 +228,6 @@ body{background:var(--bg);color:var(--text);font-family:Poppins,system-ui,sans-s
 
 <footer class="py-8 text-center muted text-sm" style="border-top:1px solid var(--line)">
  © <span id="yr"></span> LUSHINO INV · LUSHINO GRAPHICS and ART · Mbeya &amp; Kigamboni, DSM
- <div id="social" class="flex justify-center gap-4 mt-4"></div>
 </footer>
 
 <a id="waFloat" href="#" target="_blank" rel="noopener"
@@ -471,10 +470,6 @@ function renderGallery(){
  $("chips").onclick=e=>{const c=e.target.dataset.c;if(c){filter=c;renderGallery()}};
 }
 function renderClients(){$("logoStrip").innerHTML="";$("testi").innerHTML=""}
-function renderSocial(){
- const S2=[["Instagram","https://instagram.com/lushino_inv","#E1306C"],["TikTok","https://tiktok.com/@lushino_inv","#111"],["Facebook","https://facebook.com/lushinoinv","#1877F2"],["YouTube","https://youtube.com/@lushinoinv","#FF0000"]];
- $("social").innerHTML=S2.map(([n,u,c])=>`<a href="${u}" target="_blank" rel="noopener" title="${n}" class="w-11 h-11 rounded-full flex items-center justify-center font-bold text-white text-xs" style="background:${c}">${n[0]}${n[1]}</a>`).join("");
-}
 function renderWaFloat(){$("waFloat").href=`https://wa.me/255786325748?text=${encodeURIComponent(T().wa_float)}`}
 
 /* REELS: base + admin-added (S.reels) */
@@ -512,7 +507,7 @@ function typeLoop(){const words=T().typed,w=words[wi]||"";$("typed").textContent
 
 function look(){const r=document.documentElement.style;if(S.a1)r.setProperty("--a1",S.a1);if(S.a2)r.setProperty("--a2",S.a2);const h=document.querySelector(".hero");if(h)h.style.backgroundImage=S.hero?`url(${S.hero})`:""}
 function renderAll(){
- look();renderNav();renderSkills();renderWhy();renderSvc();renderAbout();renderSteps();renderPkgs();renderFaqs();renderSelects();renderSlider();renderGallery();renderClients();renderSocial();renderWaFloat();renderReels();renderCases();renderPay();renderLoc();renderBlog();renderList();
+ look();renderNav();renderSkills();renderWhy();renderSvc();renderAbout();renderSteps();renderPkgs();renderFaqs();renderSelects();renderSlider();renderGallery();renderClients();renderWaFloat();renderReels();renderCases();renderPay();renderLoc();renderBlog();renderList();
 }
 function applyLang(){
  document.documentElement.lang=lang;
@@ -577,7 +572,6 @@ $("addVid").onclick=()=>{
 
  if(!vf&&!url){alert("Choose a video file or paste an MP4 URL");return}
 
- // if URL given, use it directly
  if(url){
   const push=(thumb)=>{
    S.reels.push({src:url,thumb:thumb||"",t:title});
@@ -587,7 +581,6 @@ $("addVid").onclick=()=>{
   return;
  }
 
- // else read video file as data URL (may be large)
  if(vf.size>4*1024*1024){
   if(!confirm("This video is "+(vf.size/1048576).toFixed(1)+"MB. Large files may fail to save in the page state. Continue anyway?"))return;
  }
