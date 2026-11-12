@@ -1,8 +1,8 @@
 backend:
   name: github
-  repo: YOUR_GITHUB_USERNAME/lushino-site   # change to your repo
+  repo: mkgallery/lushino-site   # change to your repo
   branch: main
-  base_url: https://your-oauth-proxy.workers.dev   # fill in after Step 3
+  base_url: https://decap-proxy.mkgallerystore.workers.dev   # fill in after Step 3
   auth_endpoint: /auth
 
 media_folder: "images/uploads"      # uploads saved to repo here
