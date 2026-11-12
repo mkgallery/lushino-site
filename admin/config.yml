@@ -1,0 +1,28 @@
+backend:
+  name: github
+  repo: YOUR_GITHUB_USERNAME/lushino-site   # change to your repo
+  branch: main
+  base_url: https://your-oauth-proxy.workers.dev   # fill in after Step 3
+  auth_endpoint: /auth
+
+media_folder: "images/uploads"      # uploads saved to repo here
+public_folder: "/images/uploads"    # path used on site
+
+collections:
+  - name: "gallery"
+    label: "Gallery Images"
+    folder: "content/gallery"
+    create: true
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Image", name: "image", widget: "image" }
+      - { label: "Category", name: "category", widget: "select", options: ["Graphics","Motion","Printing","Photo"] }
+
+  - name: "reels"
+    label: "Video Reels"
+    folder: "content/reels"
+    create: true
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Video", name: "video", widget: "file" }
+      - { label: "Cover", name: "cover", widget: "image", required: false }
